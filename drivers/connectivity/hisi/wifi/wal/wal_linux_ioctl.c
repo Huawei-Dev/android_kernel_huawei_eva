@@ -14831,6 +14831,7 @@ OAL_STATIC oal_ssize_t  wal_hipriv_sys_read(oal_device_stru *dev, oal_device_att
     修改内容   : 新生成函数
 
 *****************************************************************************/
+# if defined(CONFIG_MODULES)
 OAL_STATIC oal_int32  wal_hipriv_proc_write(oal_file_stru *pst_file, const oal_int8 *pc_buffer, oal_uint32 ul_len, oal_void *p_data)
 {
     oal_int8  *pc_cmd;
@@ -14874,7 +14875,7 @@ OAL_STATIC oal_int32  wal_hipriv_proc_write(oal_file_stru *pst_file, const oal_i
 
     return (oal_int32)ul_len;
 }
-
+#endif
 /*****************************************************************************
  函 数 名  : wal_create_hipriv_proc
  功能描述  : 创建proc入口
@@ -30407,7 +30408,9 @@ OAL_STATIC oal_uint32  wal_hipriv_set_tx_classify_switch(oal_net_device_stru *ps
 #endif  /* _PRE_WLAN_FEATURE_TX_CLASSIFY_LAN_TO_WLAN */
 
 /*lint -e19*/
+# if defined(CONFIG_MODULES)
 oal_module_symbol(wal_hipriv_proc_write);
+#endif
 oal_module_symbol(wal_hipriv_get_mac_addr);
 /*lint +e19*/
 
