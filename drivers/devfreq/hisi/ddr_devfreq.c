@@ -27,6 +27,8 @@
 
 #define MODULE_NAME "DDR_DEVFREQ"
 
+struct devfreq_governor governors;
+
 struct ddr_devfreq_device {
 	struct devfreq *devfreq;
 	struct clk *set;
@@ -416,7 +418,7 @@ static int ddr_devfreq_probe(struct platform_device *pdev)
 		rcu_read_unlock();
 		ddev->devfreq = devfreq_add_device(&pdev->dev,
 					&ddr_devfreq_dev_profile,
-					"pm_qos",
+					governors.name,
 					ddata);
 	}
 
