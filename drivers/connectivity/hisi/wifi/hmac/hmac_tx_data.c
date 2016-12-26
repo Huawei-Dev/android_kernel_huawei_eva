@@ -75,6 +75,9 @@ extern "C" {
 /*****************************************************************************
   2 全局变量定义
 *****************************************************************************/
+#if (_PRE_PRODUCT_ID == _PRE_PRODUCT_ID_HI1102_HOST)
+OAL_STATIC oal_uint8 g_uc_ac_new = 0;
+#endif
 #if (_PRE_MULTI_CORE_MODE_OFFLOAD_DMAC != _PRE_MULTI_CORE_MODE)
 static oal_uint16 us_noqos_frag_seqnum= 0; /*保存非qos分片帧seqnum*/
 #endif
@@ -801,7 +804,6 @@ OAL_STATIC OAL_INLINE oal_void hmac_tx_update_tid(oal_bool_enum_uint8  en_wmm, o
 oal_uint8 hmac_tx_wmm_acm(oal_bool_enum_uint8  en_wmm, hmac_vap_stru *pst_hmac_vap, oal_uint8 *puc_tid)
 {
     oal_uint8                   uc_ac;
-    oal_uint8                   uc_ac_new;
 
     if ((OAL_PTR_NULL == pst_hmac_vap) || (OAL_PTR_NULL == puc_tid))
     {
@@ -814,28 +816,28 @@ oal_uint8 hmac_tx_wmm_acm(oal_bool_enum_uint8  en_wmm, hmac_vap_stru *pst_hmac_v
     }
 
     uc_ac = WLAN_WME_TID_TO_AC(*puc_tid);
-    uc_ac_new = uc_ac;
-    while ((uc_ac_new != WLAN_WME_AC_BK) && (OAL_TRUE == pst_hmac_vap->st_vap_base_info.pst_mib_info->st_wlan_mib_qap_edac[uc_ac_new].en_dot11QAPEDCATableMandatory))
+    g_uc_ac_new = uc_ac;
+    while ((g_uc_ac_new != WLAN_WME_AC_BK) && (OAL_TRUE == pst_hmac_vap->st_vap_base_info.pst_mib_info->st_wlan_mib_qap_edac[g_uc_ac_new].en_dot11QAPEDCATableMandatory))
     {
-        switch (uc_ac_new)
+        switch (g_uc_ac_new)
         {
             case WLAN_WME_AC_VO:
-                uc_ac_new = WLAN_WME_AC_VI;
+                g_uc_ac_new = WLAN_WME_AC_VI;
                 break;
 
             case WLAN_WME_AC_VI:
-                uc_ac_new = WLAN_WME_AC_BE;
+                g_uc_ac_new = WLAN_WME_AC_BE;
                 break;
 
             default:
-                uc_ac_new = WLAN_WME_AC_BK;
+                g_uc_ac_new = WLAN_WME_AC_BK;
                 break;
         }
     }
 
-    if (uc_ac_new != uc_ac)
+    if (g_uc_ac_new != uc_ac)
     {
-        *puc_tid = WLAN_WME_AC_TO_TID(uc_ac_new);
+        *puc_tid = WLAN_WME_AC_TO_TID(g_uc_ac_new);
     }
 
     return OAL_TRUE;
